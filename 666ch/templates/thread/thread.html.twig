@@ -1,0 +1,38 @@
+{% extends "Layout/base.html.twig" %}
+
+{% block body %}
+    <div class="text-center p-3">
+        <h1>{{boardName}}</h1>
+    </div>
+
+    {% for info in threadInfo %}
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <h5 class="threadId ">{{info.id}}</h5>
+                    <p class="card-title">Annon</p>
+                    <p class="card-title">{{info.date}}</p>
+                    <a class="card-title" name="{{info.threadId}}" href="{{mainThreadId}}/#{{info.threadId}}">{{info.threadId}}</a>  
+                </div>
+                
+                <span>
+                    {{ info.text | raw }}
+                </span>
+
+                <p>
+                    {{info.repliesFrom | raw}}
+                </p>  
+            </div>
+        </div>
+    {% endfor %}
+    
+    <form class="p-5">
+        <div class="text-center p-3">
+            <h4>Send message</h4>
+        </div>
+        <div class="form-group">
+            <textarea class="form-control" rows="3" placeholder="enter text" name="threadText"></textarea>
+        </div>
+        <button type="submit" class="btn">Submit</button>
+    </form>
+{% endblock %}

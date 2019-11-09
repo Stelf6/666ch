@@ -1,0 +1,39 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#main {
+    background-color: #1A1A1D;
+}
+
+h1,h3,h4,a{
+    color: #C3073F;
+}
+p{
+    color: #ffffff;
+}
+li{
+    color: #950740;
+}
+
+.card {
+    background-color: #4E4E50;
+    color: #ffffff;
+}
+
+.form-control {
+    color: #ffffff;
+    background-color: #4E4E50;
+    border-color: #6f3323;
+}
+.form-control:focus {
+    color: #ffffff;
+    background-color: #4E4E50;
+    border-color: #6f3323;
+}
+
+.btn {
+    background-color: #950740;
+}

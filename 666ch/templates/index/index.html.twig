@@ -1,0 +1,18 @@
+{% extends "Layout/base.html.twig" %}
+
+{% block body %}
+    <div id="index">
+        <div class="text-center p-3 ">
+            <h1>666chan</h1>
+        </div>
+        <div class="">
+            <p>Board list : </p>
+        </div>
+        
+        {% for board in boards %}
+            <li>
+                <a href="/board/{{board.name}}">{{board.name}}</a>
+            </li>
+        {% endfor %}
+    </div>
+{% endblock %}

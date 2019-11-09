@@ -1,0 +1,15 @@
+index:
+    path: /
+    controller: App\Controller\IndexController::index
+
+board:
+    path: /board/{boardName}
+    controller: App\Controller\BoardController::board
+
+catalog:
+    path: /{boardName}/catalog
+    controller: App\Controller\CatalogController::catalog
+
+thread:
+    path: /{boardName}/thread/{threadId}
+    controller: App\Controller\ThreadController::thread
