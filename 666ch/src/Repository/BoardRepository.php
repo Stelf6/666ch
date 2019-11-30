@@ -3,13 +3,13 @@
 namespace App\Repository;
 
 use PDO;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Board;
-
 use App\Helper\ThreadHelper;
 use Appp\Helper\BoardHelper;
 
 
-class BoardRepository 
+class BoardRepository extends AbstractController
 {
     protected $conn;
 
@@ -18,8 +18,6 @@ class BoardRepository
         $this->conn = new PDO('mysql:host=127.0.0.1;dbname=666ch', 'root', '');
         $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
-
-    
 
     public function getBoard($boardName) {
         $stmt = $this->conn->prepare("SELECT * FROM boards WHERE name = :board");
@@ -101,6 +99,7 @@ class BoardRepository
                                     `repliesTo` VARCHAR(255) NOT NULL ,
                                     `repliesFrom` VARCHAR(255) NOT NULL ,
                                     `date` VARCHAR(55) NOT NULL ,
+                                    `fileData` VARCHAR(255) NOT NULL ,
                                     PRIMARY KEY (`id`)) ENGINE = InnoDB");
         
         $stmt->execute();
@@ -118,34 +117,36 @@ class BoardRepository
         return $stmt->fetchAll();
     }
 
-    public function sendThreadMessage($bdId, $threadId, $threadData) {
-        $threadParam = ThreadHelper::ParseData($threadData->get('threadText'));
+    public function sendThreadMessage($bdId, $threadId, $param) {
+        $threadParam = ThreadHelper::ParseData($param);
 
-        foreach($threadParam['repliesArray'] as $reply) {
-            $this->updateThreadRepliesFrom($reply, $threadId, $bdId);
-        }
-
-        $stmt = $this->conn->prepare("INSERT INTO `$bdId` (`id`, `threadId`, `text`, `repliesTo`, `date`) 
-                                      VALUES (NULL, :threadId, :text, :repliesTo, :date)");
+        $stmt = $this->conn->prepare("INSERT INTO `$bdId` (`id`, `threadId`, `text`, `repliesTo`, `date`, `fileData`) 
+                                      VALUES (NULL, :threadId, :text, :repliesTo, :date, :fileData)");
 
         $stmt->bindValue(":threadId", $threadId);
         $stmt->bindValue(":text", $threadParam['text']);
         $stmt->bindValue(":repliesTo", $threadParam['repliesString']);
         $stmt->bindValue(":date", $threadParam['date']);
+        $stmt->bindValue(":fileData", $threadParam['fileData']);
         $stmt->execute();
+
+        foreach($threadParam['repliesArray'] as $reply) {
+            $this->updateThreadField($reply, $threadId, $bdId, "repliesFrom");
+        }
     }
 
-    public function updateThreadRepliesFrom($threadId, $newReply, $bdId) {
+    public function updateThreadField($newValue, $threadId, $bdId, $fieldName) {
         $threads = $this->getThreadInfo($bdId);
 
-        $newReplies = ThreadHelper::getThreadReplies($threadId, $threads, $newReply);
+        $newValue = ThreadHelper::getThreadFieldArray($newValue, $threadId, $threads, $fieldName);
 
         $stmt = $this->conn->prepare("UPDATE `$bdId`
-                                      SET repliesFrom=:repliesFrom
+                                      SET `$fieldName`=:newValue
 		                              WHERE threadId=:threadId");
-		
-        $stmt->bindValue(":repliesFrom", $newReplies);
+        
+        $stmt->bindValue(":newValue", $newValue);
         $stmt->bindValue(":threadId", $threadId);
+  
         $stmt->execute();
     }
 }

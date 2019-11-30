@@ -6,6 +6,17 @@ use App\Repository\BoardRepository;
 
 abstract class ThreadHelper {
 
+    public function parseData($threadData) {
+        $param['text'] = ThreadHelper::parseText($threadData['threadText']);
+        $param['repliesArray'] = ThreadHelper::getRepliesArray($threadData['threadText']);
+        $param['repliesString'] = ThreadHelper::getRepliesString($threadData['threadText']);
+        $param['date'] = date("m/d/y H:i:s");
+        //$param['fileData'] = implode(",",$threadData['threadMediaFile']);
+        $param['fileData'] = $threadData['threadMediaFile'];
+
+        return $param;
+    }
+
     public function getRepliesString($text) {
         preg_match_all('#\>>(.*?)\>>#', $text, $match);
 
@@ -28,20 +39,18 @@ abstract class ThreadHelper {
         return $text;
     }
 
-    public function parseData($threadText) {
-        $param['text'] = ThreadHelper::parseText($threadText);
-        $param['repliesArray'] = ThreadHelper::getRepliesArray($threadText);
-        $param['repliesString'] = ThreadHelper::getRepliesString($threadText);
-        $param['date'] = date("m/d/y H:i:s");
-
-
-        return $param;
-    }
-
     public function ParseThreads($thread) {
         for( $i=0; $i < count($thread) ; $i++ ) {  
             $repliesFrom = $thread[$i]['repliesFrom'];
+            $fileData = $thread[$i]['fileData'];
 
+            //fileData
+            if($repliesFrom == "" || strpos($fileData, ',') == false) {}
+            else {
+                $thread[$i]['fileData'] = explode( ",", $fileData);
+            }
+
+            //reply
             if($repliesFrom == "") {}
             //if contain only one reply
             elseif (strpos($thread[$i]['repliesFrom'], ',') == false) {     
@@ -60,22 +69,26 @@ abstract class ThreadHelper {
         return $thread;
     }
 
-    public function getThreadReplies($threadId, $threads, $newReply) {    
+    public function getThreadFieldArray($newValue, $threadId, $threads, $fieldName) {    
         foreach($threads as $thread) {
             if($thread['threadId'] == $threadId) {
-                $thredInfo = $thread;
+                $threadInfo = $thread;
             }
         }
-
-        if(strlen($thredInfo['repliesFrom'])>1) {
-            $replies = $thredInfo['repliesFrom'] . ",";
-        }
-        elseif(strlen($thredInfo['repliesFrom'])<=1) {
-            $replies = "";
+        
+        if(!isset($threadInfo)) {
+            return $newValue;
         }
 
-        $newReplies = $replies . $newReply;
+        if(strlen($threadInfo[$fieldName])>1) {
+            $fieldValues = $threadInfo[$fieldName] . ",";
+        }
+        elseif(strlen($threadInfo[$fieldName])<=1) {
+            $fieldValues = "";
+        }
 
-        return $newReplies;
+        $fieldValues = $fieldValues . $newValue;
+
+        return $fieldValues;
     }
 } 

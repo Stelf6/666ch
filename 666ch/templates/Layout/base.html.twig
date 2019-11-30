@@ -8,12 +8,18 @@
             <link href="{{ asset('css/main.css') }}" type="text/css" rel="stylesheet" />
             <link href="{{ asset('css/index.css') }}" type="text/css" rel="stylesheet" />
             <link href="{{ asset('css/thread.css') }}" type="text/css" rel="stylesheet" />
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         {% endblock %}
+
     </head>
     <body id="main">
         <div class="container ">
             {% block body %}{% endblock %}
         </div>
-        {% block javascripts %}{% endblock %}
+        
+        {% block javascripts %}
+            
+        {% endblock %}
+
     </body>
 </html>

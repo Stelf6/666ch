@@ -14,7 +14,13 @@ class BoardController extends AbstractController
         $request = Request::createFromGlobals();
 
         if($request->query->get('threadText') != null) {
-            $threadId = $this->boardRep->createThread($boardName, $request->query);
+            $param = [
+                'threadText' => $request->query->get('threadText'),
+                //fix
+                'threadMediaFile' => "",
+            ];
+
+            $threadId = $this->boardRep->createThread($boardName, $param);
 
             return $this->redirectToRoute('thread',['boardName' => $boardName, 'threadId' => $threadId]);
         }

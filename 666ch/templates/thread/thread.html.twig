@@ -9,15 +9,17 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <h5 class="threadId ">{{info.id}}</h5>
+                    <p class="threadId ">{{info.id}}</p>
                     <p class="card-title">Annon</p>
                     <p class="card-title">{{info.date}}</p>
-                    <a class="card-title" name="{{info.threadId}}" href="{{mainThreadId}}/#{{info.threadId}}">{{info.threadId}}</a>  
+                    <a class="threadId card-title" name="{{info.threadId}}" href="{{mainThreadId}}/#{{info.threadId}}">{{info.threadId}}</a>  
                 </div>
-                
-                <span>
+
+                <img src="/uploads/{{info.fileData}}" class="rounded float-left img-fluid" style="width: 40%; height: 40%;" alt="">
+
+                <div class="threadText">
                     {{ info.text | raw }}
-                </span>
+                </div>
 
                 <p>
                     {{info.repliesFrom | raw}}
@@ -25,14 +27,24 @@
             </div>
         </div>
     {% endfor %}
+
+    {{ form_start(form) }}
     
-    <form class="p-5">
-        <div class="text-center p-3">
-            <h4>Send message</h4>
+        <div class="text-center p-3" >
+            <h4 id="formPosting">Send message</h4>
         </div>
         <div class="form-group">
             <textarea class="form-control" rows="3" placeholder="enter text" name="threadText"></textarea>
         </div>
+        {{ form_row(form.mediaFile) }}
         <button type="submit" class="btn">Submit</button>
-    </form>
+   
+    {{ form_end(form) }}
+
+
+    {# {% block stylesheets %}
+        {{ parent() }}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css" integrity="sha256-e47xOkXs1JXFbjjpoRr1/LhVcqSzRmGmPqsrUQeVs+g=" crossorigin="anonymous" />
+    {% endblock %}
+     #} #}
 {% endblock %}
