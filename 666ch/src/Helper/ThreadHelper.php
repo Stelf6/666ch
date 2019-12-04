@@ -11,8 +11,14 @@ abstract class ThreadHelper {
         $param['repliesArray'] = ThreadHelper::getRepliesArray($threadData['threadText']);
         $param['repliesString'] = ThreadHelper::getRepliesString($threadData['threadText']);
         $param['date'] = date("m/d/y H:i:s");
-        //$param['fileData'] = implode(",",$threadData['threadMediaFile']);
-        $param['fileData'] = $threadData['threadMediaFile'];
+
+        if(isset($threadData['threadMediaFile'])) {
+            $param['fileData'] = $threadData['threadMediaFile'];
+        }
+        else {
+            $param['fileData'] = "";
+        }
+        
 
         return $param;
     }
@@ -33,7 +39,8 @@ abstract class ThreadHelper {
         
         foreach($replies[1] as $reply) {
             //create reply url
-            $text = str_replace(">>".$reply.">>", '<a href=#'.$reply.">" .$reply .'</a>', $text);
+           
+            $text = str_replace(">>".$reply.">>", "<a href='#".$reply."'>" .$reply .'</a>', $text);
         }
     
         return $text;
@@ -49,19 +56,18 @@ abstract class ThreadHelper {
             else {
                 $thread[$i]['fileData'] = explode( ",", $fileData);
             }
-
             //reply
             if($repliesFrom == "") {}
             //if contain only one reply
             elseif (strpos($thread[$i]['repliesFrom'], ',') == false) {     
-                $thread[$i]['repliesFrom'] = '<a href="#' .$repliesFrom. '"> >>' .$repliesFrom. '</a>';
+                $thread[$i]['repliesFrom'] = "<a href='#" .$repliesFrom. "'> >>" .$repliesFrom. "</a>";
             }
             else {
                 $replies = explode( ",", $repliesFrom);
                 $thread[$i]['repliesFrom'] = "";
 
                 foreach($replies as $reply) {
-                    $thread[$i]['repliesFrom'] .= '<a href="#' .$reply. '"> >>' .$reply. '</a>';
+                    $thread[$i]['repliesFrom'] .= "<a href='#" .$reply. "'> >>" .$reply. "</a> ";
                 }
             }
         }
@@ -69,26 +75,22 @@ abstract class ThreadHelper {
         return $thread;
     }
 
-    public function getThreadFieldArray($newValue, $threadId, $threads, $fieldName) {    
+    public function getThreadReplies($threadId, $threads, $newReply) {    
         foreach($threads as $thread) {
             if($thread['threadId'] == $threadId) {
-                $threadInfo = $thread;
+                $thredInfo = $thread;
             }
         }
-        
-        if(!isset($threadInfo)) {
-            return $newValue;
+
+        if(strlen($thredInfo['repliesFrom'])>1) {
+            $replies = $thredInfo['repliesFrom'] . ",";
+        }
+        elseif(strlen($thredInfo['repliesFrom'])<=1) {
+            $replies = "";
         }
 
-        if(strlen($threadInfo[$fieldName])>1) {
-            $fieldValues = $threadInfo[$fieldName] . ",";
-        }
-        elseif(strlen($threadInfo[$fieldName])<=1) {
-            $fieldValues = "";
-        }
+        $newReplies = $replies . $newReply;
 
-        $fieldValues = $fieldValues . $newValue;
-
-        return $fieldValues;
+        return $newReplies;
     }
 } 

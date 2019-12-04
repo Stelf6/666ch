@@ -131,22 +131,21 @@ class BoardRepository extends AbstractController
         $stmt->execute();
 
         foreach($threadParam['repliesArray'] as $reply) {
-            $this->updateThreadField($reply, $threadId, $bdId, "repliesFrom");
+            $this->updateThreadRepliesFrom($reply, $threadId, $bdId);
         }
     }
 
-    public function updateThreadField($newValue, $threadId, $bdId, $fieldName) {
+    public function updateThreadRepliesFrom($threadId, $newReply, $bdId) {
         $threads = $this->getThreadInfo($bdId);
 
-        $newValue = ThreadHelper::getThreadFieldArray($newValue, $threadId, $threads, $fieldName);
+        $newReplies = ThreadHelper::getThreadReplies($threadId, $threads, $newReply);
 
         $stmt = $this->conn->prepare("UPDATE `$bdId`
-                                      SET `$fieldName`=:newValue
+                                      SET repliesFrom=:repliesFrom
 		                              WHERE threadId=:threadId");
-        
-        $stmt->bindValue(":newValue", $newValue);
+		
+        $stmt->bindValue(":repliesFrom", $newReplies);
         $stmt->bindValue(":threadId", $threadId);
-  
         $stmt->execute();
     }
 }

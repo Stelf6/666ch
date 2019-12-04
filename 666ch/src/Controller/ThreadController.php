@@ -9,8 +9,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Helper\ThreadHelper;
-use App\Entity\MediaFile;
-use App\Form\MediaFileType;
+use App\Entity\ThreadForm;
+use App\Form\ThreadFormType;
 
 class ThreadController extends AbstractController
 {
@@ -18,15 +18,18 @@ class ThreadController extends AbstractController
     {
         $request = Request::createFromGlobals();
         
-        $product = new MediaFile();
-        $form = $this->createForm(MediaFileType::class, $product);
+        $product = new ThreadForm();
+        $form = $this->createForm(ThreadFormType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $mediaFile = $form['mediaFile']->getData();
 
-            if ($mediaFile) {
+            $mediaFile = $form['mediaFile']->getData();
+            
+            if (isset($mediaFile)) {
+           
                 $originalFilename = pathinfo($mediaFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // $originalFilename = pathinfo($mediaFile->getClientOriginalName(), PATHINFO_FILENAME);
                 // this is needed to safely include the file name as part of the URL
                 // $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
                 $newFilename = $originalFilename.'-'.uniqid().'.'.$mediaFile->guessExtension();
@@ -40,16 +43,11 @@ class ThreadController extends AbstractController
                 } catch (FileException $e) { }
 
                 $product->setFilename($newFilename);
-            }
-        }
-        
-        if($request->request->get('threadText') != null) {
+            }      
+            //$_FILES['thread_form']['name']['mediaFile']
             $id = $this->boardRep->getThreadId();
-
-            $imagePath = str_replace("\\", "/", $this->getParameter('mediaFile_directory'));
-
             $param = [
-                'threadText' => $request->request->get('threadText'),
+                'threadText' => $form['threadText']->getData(),
                 'threadMediaFile' => $product->getFileName(),
             ];
 
@@ -58,7 +56,6 @@ class ThreadController extends AbstractController
             return $this->redirectToRoute('thread',['boardName' => $boardName, 
                                                     'threadId' => $threadId]);
         }
-
         else{
             $threads = $this->boardRep->getThreadInfo($threadId);
 
@@ -67,8 +64,7 @@ class ThreadController extends AbstractController
                 'boardName' => $boardName,
                 'mainThreadId' => $threadId,
                 'form' => $form->createView(),
-            ];
-
+            ];      
             return $this->render('thread/thread.html.twig',$param);
         }
     }
