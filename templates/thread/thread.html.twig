@@ -1,0 +1,52 @@
+{% extends "Layout/base.html.twig" %}
+
+{% block body %}
+
+    <div class="text-center p-3">
+        <h1>{{boardName}}</h1>
+    </div>
+    <div id="threadMessages">
+        {% for info in threadInfo %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <p class="card-title">Anonymous {{ info.date }}</p>
+                        <a class="threadId card-title" name="{{ info.threadId }}" href="{{ mainThreadId }}/#{{ info.threadId }}">{{ info.threadId }}</a>  
+                    </div>
+                    
+                    {% if info.fileData %}
+                        <div class="threadImg">
+                            <img data-enlargable src="/uploads/{{ info.fileData }}" class="threadImg rounded float-left img-fluid" width="15%" height="25%">
+                        </div>
+                    {% endif %}
+
+                    <div class="threadText">
+                        {{ info.text | raw }}
+                    </div>
+
+                    <div class="threadRepliesFrom">
+                        {{ info.repliesFrom | raw }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div class="text-center p-3" >
+        <h4 id="formPosting">Send message</h4>
+    </div>
+
+    <div class="form">
+        {{ form_start(form, {'attr': {'id': 'threadForm'},
+                             'attr': {'class': 'row'}}) }}   
+            <div id="threadText" class="col-11">
+                {{ form_row(form.threadText, {'attr': {'id': 'fileInput'},
+                                              'attr': {'row': '3'}}) }}
+            </div>
+            <div id="threadFileData" class="col-1">
+                {{ form_row(form.mediaFile) }}
+            </div>
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}
