@@ -19,7 +19,8 @@ class BoardRepository extends AbstractController
         $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
-    public function getBoard($boardName) {
+    public function getBoard($boardName) 
+    {
         $stmt = $this->conn->prepare("SELECT * FROM boards WHERE name = :board");
         $stmt->bindValue(":board", $boardName);
         $stmt->execute();
@@ -35,7 +36,8 @@ class BoardRepository extends AbstractController
         return $stmt->fetchAll(PDO::FETCH_CLASS, "App\Entity\Board");
     }
 
-    public function updateThreadList($threadId, $boardName) {
+    public function updateThreadList($threadId, $boardName) 
+    {
         $board = $this->getBoard($boardName);
 
         if(strlen($board['threadList'])>1) {
@@ -54,7 +56,8 @@ class BoardRepository extends AbstractController
         $stmt->execute();
     }
 
-    public function getThreadList($boardName) {
+    public function getThreadList($boardName) 
+    {
         $board = $this->getBoard($boardName);
 
         if(strlen($board['threadList'])>1) {
@@ -71,7 +74,8 @@ class BoardRepository extends AbstractController
         return $threadsInfo;
     }
 
-    public function getThreadId() {
+    public function getThreadId() 
+    {
         $stmt = $this->conn->prepare("SELECT threadId FROM thread ");
         $stmt->execute();
         $threadId = $stmt->fetchAll()[0][0];
@@ -88,7 +92,8 @@ class BoardRepository extends AbstractController
     }
 
     //threadData == request
-    public function createThread($boardName, $threadData) {
+    public function createThread($boardName, $threadData) 
+    {
         $threadId = $this->getThreadId();
 
         //create thread table    
@@ -110,14 +115,16 @@ class BoardRepository extends AbstractController
         return $threadId;
     }
 
-    public function getThreadInfo($threadName) {
-        $stmt = $this->conn->prepare("SELECT * FROM `$threadName`");
+    public function getThreadInfo($threadId) 
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM `$threadId`");
         $stmt->execute();
       
         return $stmt->fetchAll();
     }
 
-    public function sendThreadMessage($bdId, $threadId, $param) {
+    public function sendThreadMessage($bdId, $threadId, $param) 
+    {
         $threadParam = ThreadHelper::ParseData($param);
 
         $stmt = $this->conn->prepare("INSERT INTO `$bdId` (`id`, `threadId`, `text`, `repliesTo`, `date`, `fileData`) 

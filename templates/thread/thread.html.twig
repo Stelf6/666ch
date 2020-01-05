@@ -37,13 +37,11 @@
     </div>
 
     <div class="form">
-        {{ form_start(form, {'attr': {'id': 'threadForm'},
-                             'attr': {'class': 'row'}}) }}   
-            <div id="threadText" class="col-11">
-                {{ form_row(form.threadText, {'attr': {'id': 'fileInput'},
-                                              'attr': {'row': '3'}}) }}
+        {{ form_start(form, {'attr': {'id': 'threadForm'}})}}   
+            <div id="threadText">
+                {{ form_row(form.threadText) }}
             </div>
-            <div id="threadFileData" class="col-1">
+            <div id="threadFileData">
                 {{ form_row(form.mediaFile) }}
             </div>
         {{ form_end(form) }}

@@ -9,22 +9,6 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
-
-
-CREATE TABLE `100000001` (
-  `id` int(255) NOT NULL,
-  `threadId` int(255) NOT NULL,
-  `text` varchar(255) NOT NULL,
-  `repliesTo` varchar(255) NOT NULL,
-  `repliesFrom` varchar(255) NOT NULL,
-  `date` varchar(55) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-INSERT INTO `100000001` (`id`, `threadId`, `text`, `repliesTo`, `repliesFrom`, `date`) VALUES
-(1, 100000001, 'new', '', '100000002,100000003', '11/08/19 18:59:05'),
-(2, 100000002, 'reply <a href=#100000001>100000001</a>', '100000001', '', '11/08/19 18:59:16'),
-(3, 100000003, 'second reply  <a href=#100000001>100000001</a>', '100000001', '', '11/08/19 18:59:38');
-
 CREATE TABLE `boards` (
   `id` int(11) NOT NULL,
   `name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -32,7 +16,7 @@ CREATE TABLE `boards` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `boards` (`id`, `name`, `threadList`) VALUES
-(1, 'Music', '100000001'),
+(1, 'Music', ''),
 (2, 'Litterature', ''),
 (3, 'VisualNovel', '');
 

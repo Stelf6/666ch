@@ -18,27 +18,25 @@ class ThreadController extends AbstractController
     public function thread($boardName,$threadId)
     {
         $request = Request::createFromGlobals();
-        
+   
         $product = new ThreadForm();
         $form = $this->createForm(ThreadFormType::class, $product);
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
             $mediaFile = $form['mediaFile']->getData();
-
+        
             if (isset($mediaFile)) {
                 $originalFilename = pathinfo($mediaFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $newFilename = $originalFilename.'-'.uniqid().'.'.$mediaFile->guessExtension();
-
-                // Move the file to the directory
+   
                 try {
-                    $mediaFile->move(
-                        $this->getParameter('mediaFile_directory'),
-                        $newFilename
-                    );
+                    //fix
+                    $mediaFile->move($this->get('kernel')->getProjectDir()."/public/uploads",$newFilename);
                 } catch (FileException $e) { }
 
                 $product->setFilename($newFilename);
+                
             }      
             $id = $this->boardRep->getThreadId();
 
