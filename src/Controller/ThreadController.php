@@ -12,13 +12,16 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Helper\ThreadHelper;
 use App\Entity\ThreadForm;
 use App\Form\ThreadFormType;
+use App\Repository\BoardRepository;
 
 class ThreadController extends AbstractController
 {
     public function thread($boardName,$threadId)
     {
         $request = Request::createFromGlobals();
-   
+        
+        $boardRep = new BoardRepository();
+
         $product = new ThreadForm();
         $form = $this->createForm(ThreadFormType::class, $product);
         $form->handleRequest($request);
@@ -38,7 +41,7 @@ class ThreadController extends AbstractController
                 $product->setFilename($newFilename);
                 
             }      
-            $id = $this->boardRep->getThreadId();
+            $id = $boardRep->getThreadId();
 
             $param = [
                 'threadText' => $form['threadText']->getData(),
@@ -48,7 +51,7 @@ class ThreadController extends AbstractController
                 'date' => date("m/d/y H:i:s")
             ];
 
-            $this->boardRep->sendThreadMessage($threadId, $id, $param);
+            $boardRep->sendThreadMessage($threadId, $id, $param);
             
             $param['threadText'] = ThreadHelper::parseText($form['threadText']->getData());
 
@@ -56,7 +59,7 @@ class ThreadController extends AbstractController
             return new JsonResponse($param);
         }
         else{
-            $threads = $this->boardRep->getThreadInfo($threadId);
+            $threads = $boardRep->getThreadInfo($threadId);
 
             $param = [
                 'threadInfo' => ThreadHelper::parseThreads($threads),
